@@ -45,7 +45,10 @@ namespace Flirper
                         throw new Exception ("error while fetching " + entry.uri);
                     }
                     byte[] imgdata = req.response.bytes;
-                    assignImageData (bgsprite, imgdata);
+                    Texture2D bg = new Texture2D (1, 1);
+                    bg.LoadImage (imgdata);
+                    
+                    assignImageData (bgsprite, bg);
                     createLabel (entry);
                 }
             };
@@ -53,15 +56,34 @@ namespace Flirper
 
         static void changeBackgroundImage (UITextureSprite bgsprite, ImageListEntry entry)
         {
-            if (entry.isHTTP) {
+            if (entry.isLatestSaveGame) {
+                SaveGameMetaData latestSaveGame = SaveHelper.GetLatestSaveGame ();
+
+                if (latestSaveGame == null) {
+                    throw new Exception ("no savegame available");
+                }
+
+                String title = latestSaveGame.cityName;
+                String extraInfo = latestSaveGame.timeStamp.ToShortDateString ();
+
+                Texture2D savegameimage = latestSaveGame.imageRef.Instantiate<Texture> () as Texture2D;
+                savegameimage = Blur.FastBlur (savegameimage, 2, 2);
+                assignImageData (bgsprite, savegameimage);
+
+                createLabel (new ImageListEntry ("", title, "", extraInfo));
+            } else if (entry.isHTTP) {
                 Request imgget = new Request ("get", entry.uri);
                 imgget.AddHeader ("Accept-Language", "en");
 
-                imgget.Send(httpCallback(bgsprite, entry));
+                imgget.Send (httpCallback (bgsprite, entry));
             } else {
                 // read path @verbatim to avoid escaping
                 byte[] imgdata = System.IO.File.ReadAllBytes (@entry.uri);
-                assignImageData (bgsprite, imgdata);
+
+                Texture2D bg = new Texture2D (1, 1);
+                bg.LoadImage (imgdata);
+
+                assignImageData (bgsprite, bg);
                 createLabel(entry);
             }
         }
@@ -90,8 +112,8 @@ namespace Flirper
                 flirperAttribution.text += " (by " + entry.author + ")";
             }
 
-            if (!String.IsNullOrEmpty (entry.source)) {
-                flirperAttribution.text += "\n" + entry.source;
+            if (!String.IsNullOrEmpty (entry.extraInfo)) {
+                flirperAttribution.text += "\n" + entry.extraInfo;
             }
 
             flirperAttribution.outlineColor = new Color32 (0, 0, 0, 200);
@@ -103,11 +125,8 @@ namespace Flirper
             flirperAttribution.relativePosition += new Vector3 (-10, 10);
         }
 
-        static void assignImageData (UITextureSprite bgsprite, byte[] imgdata)
+        static void assignImageData (UITextureSprite bgsprite, Texture2D bg)
         {
-            Texture2D bg = new Texture2D (1, 1);
-            bg.LoadImage (imgdata);
-
             //reset to allow multiple flirps without stretching
             bgsprite.width = UIView.GetAView ().GetScreenResolution ().x;
             bgsprite.height = UIView.GetAView ().GetScreenResolution ().y;
