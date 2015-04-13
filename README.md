@@ -13,7 +13,7 @@ Once added, it will read (and create if needed) the file FlirperImageList.txt in
 * Linux: `/home/<username>/.local/share/Colossal Order/Cities_Skylines/ModConfig/`
 
 ##Default configuration
-The mod ships with a default FlirperImageList.txt. It contains 10 links to Creative Commons-licensed images with attributions to serve as an example.
+The mod ships with a default FlirperImageList.txt. It contains links to Cities: Skylines screenshots with attributions to serve as an example.
 
 ##Custom configuration
 FlirperImageList.txt is a list of image sources, with each line representing one source. Each line must start with a path to either a local image file, a local directory or a URL to an image. For example:
@@ -27,12 +27,19 @@ Each line (except for directories) can have additional fields separated by a `;`
 * path
 * title
 * author
-* attribution
+* additional information
 
 For example
 ```
 http://i.imgur.com/H2mby53.jpg;Cats on stairs;13ucci;http://redd.it/2ytelo/
 ```
+
+##Special sources
+You can add the line
+```
+SAVEGAME
+```
+to the FlirperImageList.txt, just like any other source. If the mod chooses this line, it will get your latest savegame and display its preview screenshot. Due to technical limitations (low resolution), this image is blurred, so it might not look great everywhere.
 
 ##Disabling the mod
 Flirper cannot be enabled or disabled via the Content Manager, because its logic is started when the game checks the mod's name. Therefore, to disable Flirper, you need to unsubscribe from the mod (through Steam or the Content Manager).
