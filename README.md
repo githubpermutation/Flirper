@@ -15,7 +15,7 @@ Once added, it will read (and create if needed) the file FlirperImageList.txt in
 ##Default configuration
 The mod ships with a default FlirperImageList.txt. It contains 10 links to Creative Commons-licensed images with attributions to serve as an example.
 
-##Configuration
+##Custom configuration
 FlirperImageList.txt is a list of image sources, with each line representing one source. Each line must start with a path to either a local image file, a local directory or a URL to an image. For example:
 ```
 C:\Users\MyUserName\Desktop\images\
