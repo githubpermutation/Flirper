@@ -77,12 +77,12 @@ namespace Flirper
                 author = items [2];
             }
 
-            string source = "";
+            string extraInfo = "";
             if (items.Length > 3) {
-                source = items [3];
+                extraInfo = items [3];
             }
             
-            return new ImageListEntry (uri, title, author, source);
+            return new ImageListEntry (uri, title, author, extraInfo);
         }
 
         private static List<ImageListEntry> getDirectoryEntries (string directoryPath)

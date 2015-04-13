@@ -8,14 +8,14 @@ namespace Flirper
         public string uri;
         public string title;
         public string author;
-        public string source;
+        public string extraInfo;
 
-        public ImageListEntry (string uri, string title, string author, string source)
+        public ImageListEntry (string uri, string title, string author, string extraInfo)
         {
             this.uri = uri;
             this.title = title;
             this.author = author;
-            this.source = source;
+            this.extraInfo = extraInfo;
         }
         
         public bool isHTTP {
@@ -26,11 +26,17 @@ namespace Flirper
 
         public bool isDirectory {
             get {
-                if (isHTTP) 
+                if (isHTTP || isLatestSaveGame) 
                     return false;
 
                 FileAttributes attr = System.IO.File.GetAttributes (this.uri);
                 return (attr & FileAttributes.Directory) == FileAttributes.Directory;
+            }
+        }
+
+        public bool isLatestSaveGame {
+            get {
+                return this.uri.ToLower ().StartsWith ("savegame");
             }
         }
     }

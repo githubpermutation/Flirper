@@ -39,6 +39,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="FlirperLoader.cs" />
     <Compile Include="ImageListEntry.cs" />
+    <Compile Include="Blur.cs" />
     <Compile Include="ImageList.cs" />
     <Compile Include="FlirperBootstrap.cs" />
   </ItemGroup>
