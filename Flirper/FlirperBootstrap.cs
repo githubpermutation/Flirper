@@ -28,11 +28,17 @@ namespace Flirper
                 return;
             }
 
+            String error = "";
             try {
                 changeBackgroundImage (bgsprite, entry);
             } catch (Exception ex) {
                 DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, FlirperBootstrap.ModTag+" " + ex.ToString ());
-            }                
+                error = "Error loading "+entry.uri+"\n";
+                error += "Click to try again";
+            }
+            if(error != "") {
+                changeLabel(error);
+            }
         }
 
         static Action<Request> httpCallback (UITextureSprite bgsprite, ImageListEntry entry)
@@ -95,37 +101,55 @@ namespace Flirper
                 UILabel flirperAttribution = UIView.GetAView ().AddUIComponent (typeof(UILabel)) as UILabel;
                 flirperAttribution.name = "FlirperAttribution";
                 flirperAttribution.eventClick += loadNextFlirp;
+
+                flirperAttribution.textAlignment = UIHorizontalAlignment.Right;
+                flirperAttribution.textScale = 2f;
+                flirperAttribution.textScaleMode = UITextScaleMode.ScreenResolution;
+
+                flirperAttribution.outlineColor = new Color32 (0, 0, 0, 200);
+                flirperAttribution.outlineSize = 1;
+                flirperAttribution.useOutline = true;
             }
+        }
+
+        static void changeLabel (String msg) {
+
+            String text = "";
+            if(msg != null) {
+                text = msg;
+            }
+
+            UILabel flirperAttribution = UIView.GetAView ().FindUIComponent ("FlirperAttribution") as UILabel;
+            if(flirperAttribution == null) {
+                return;
+            }
+
+            flirperAttribution.text = text;
+
+            flirperAttribution.relativePosition = new Vector3 (UIView.GetAView().GetScreenResolution().x - flirperAttribution.width, 0);
+            flirperAttribution.relativePosition += new Vector3 (-10, 10);
         }
 
         static void changeLabel (ImageListEntry entry)
         {
-            UILabel flirperAttribution = UIView.GetAView ().FindUIComponent ("FlirperAttribution") as UILabel;
+            String text = "";
 
-            flirperAttribution.textAlignment = UIHorizontalAlignment.Right;
-            flirperAttribution.textScale = 2f;
-            flirperAttribution.textScaleMode = UITextScaleMode.ScreenResolution;
-
-            flirperAttribution.text = "";
-
+            if(entry == null) {
+                changeLabel("");
+                return;
+            }
             if (!String.IsNullOrEmpty (entry.title)) {
-                flirperAttribution.text += entry.title;
+                text += entry.title;
             }
 
             if (!String.IsNullOrEmpty (entry.author)) {
-                flirperAttribution.text += " (by " + entry.author + ")";
+                text += " (by " + entry.author + ")";
             }
 
             if (!String.IsNullOrEmpty (entry.extraInfo)) {
-                flirperAttribution.text += "\n" + entry.extraInfo;
+                text += "\n" + entry.extraInfo;
             }
-
-            flirperAttribution.outlineColor = new Color32 (0, 0, 0, 200);
-            flirperAttribution.outlineSize = 1;
-            flirperAttribution.useOutline = true;
-
-            flirperAttribution.relativePosition = new Vector3 (UIView.GetAView().GetScreenResolution().x - flirperAttribution.width, 0);
-            flirperAttribution.relativePosition += new Vector3 (-10, 10);
+            changeLabel(text);
         }
 
         static void loadNextFlirp (UIComponent component, UIMouseEventParameter eventParam)
