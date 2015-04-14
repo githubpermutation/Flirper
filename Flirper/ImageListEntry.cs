@@ -24,12 +24,21 @@ namespace Flirper
             }
         }
 
-        public bool isDirectory {
+        public bool isFile {
             get {
                 if (isHTTP || isLatestSaveGame) 
                     return false;
 
-                FileAttributes attr = System.IO.File.GetAttributes (this.uri);
+                return !System.IO.Directory.Exists(@uri) && System.IO.File.Exists(@uri);
+            }
+        }
+
+        public bool isDirectory {
+            get {
+                if (isHTTP || isLatestSaveGame || isFile) 
+                    return false;
+
+                FileAttributes attr = System.IO.File.GetAttributes (@uri);
                 return (attr & FileAttributes.Directory) == FileAttributes.Directory;
             }
         }
@@ -37,6 +46,22 @@ namespace Flirper
         public bool isLatestSaveGame {
             get {
                 return this.uri.ToLower ().StartsWith ("savegame");
+            }
+        }
+
+        public bool isValidPath {
+            get {
+                if(isHTTP || isLatestSaveGame)
+                    return true;
+
+                try {
+                    FileInfo fi = new System.IO.FileInfo(@uri);
+                    FileAttributes attr = System.IO.File.GetAttributes (@uri);
+                } catch (Exception ex) {
+                    ex.ToString();
+                    return false;
+                }
+                return true;
             }
         }
     }

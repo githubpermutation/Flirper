@@ -26,12 +26,17 @@ namespace Flirper
 
             foreach (string entry in fileEntries) {
                 ImageListEntry imagelistentry = parse (entry);
-                if (imagelistentry == null)
+
+                if (imagelistentry == null || !imagelistentry.isValidPath)
                     continue;
 
                 if (imagelistentry.isDirectory) {
                     entries.AddRange (getDirectoryEntries (imagelistentry.uri));
-                } else {
+                } else { 
+                    if(imagelistentry.isFile) {
+                        String title = Path.GetFileNameWithoutExtension (@imagelistentry.uri);
+                        imagelistentry = new ImageListEntry (imagelistentry.uri, title, imagelistentry.author, imagelistentry.extraInfo);
+                    }
                     entries.Add (imagelistentry);
                 }
             }

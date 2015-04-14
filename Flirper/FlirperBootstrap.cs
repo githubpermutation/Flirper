@@ -22,13 +22,20 @@ namespace Flirper
 
             initLabel (); 
 
+            String error = "";
+
             ImageListEntry entry = ImageList.getRandomEntry ();
             if (entry == null) {
                 DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, FlirperBootstrap.ModTag+" could not get an image entry. Check format of FlirperImageList.txt");
+                error = "Could not load a valid entry\n";
+                error += "Click to try again";
+            }
+
+            if(error != "") {
+                changeLabel(error);
                 return;
             }
 
-            String error = "";
             try {
                 changeBackgroundImage (bgsprite, entry);
             } catch (Exception ex) {
@@ -36,8 +43,10 @@ namespace Flirper
                 error = "Error loading "+entry.uri+"\n";
                 error += "Click to try again";
             }
+
             if(error != "") {
                 changeLabel(error);
+                return;
             }
         }
 
@@ -51,10 +60,15 @@ namespace Flirper
                     if (req.response == null || req.response.status != 200) {
                         throw new Exception ("error while fetching " + entry.uri);
                     }
-                    byte[] imgdata = req.response.bytes;
+
                     Texture2D bg = new Texture2D (1, 1);
+                    byte[] imgdata = req.response.bytes;
                     bg.LoadImage (imgdata);
-                    
+
+                    if (bg.width < 10 || bg.height < 10) {
+                        throw new Exception ("image looks wrong " + entry.uri);
+                    }
+
                     assignImageData (bgsprite, bg);
                     changeLabel (entry);
                 }
