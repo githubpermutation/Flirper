@@ -170,7 +170,7 @@ namespace Flirper
         {
             UILabel label = ((UILabel)component);
             if(label.text != "Loading"){
-                label.text = "Loading";
+                changeLabel("Loading");
                 FlirperBootstrap.flirpIt();
             }
         }
