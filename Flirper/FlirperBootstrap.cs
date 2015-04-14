@@ -8,6 +8,8 @@ namespace Flirper
 {
     public class FlirperBootstrap : MonoBehaviour
     {
+        private static readonly string ModTag = "[Flirper]";
+
         public static void flirpIt ()
         {
             UIComponent background = UIView.GetAView ().FindUIComponent ("BackgroundSprite");
@@ -22,14 +24,14 @@ namespace Flirper
 
             ImageListEntry entry = ImageList.getRandomEntry ();
             if (entry == null) {
-                DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, "Flirper: could not get an image entry. Check format of FlirperImageList.txt");
+                DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, FlirperBootstrap.ModTag+" could not get an image entry. Check format of FlirperImageList.txt");
                 return;
             }
 
             try {
                 changeBackgroundImage (bgsprite, entry);
             } catch (Exception ex) {
-                DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, "Flirper: " + ex.ToString ());
+                DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, FlirperBootstrap.ModTag+" " + ex.ToString ());
             }                
         }
 
