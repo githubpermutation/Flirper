@@ -10,9 +10,6 @@ namespace Flirper
     {
         public static void flirpIt ()
         {
-            if (UIView.GetAView ().FindUIComponent ("FlirperAttribution") != null)
-                return;
-
             UIComponent background = UIView.GetAView ().FindUIComponent ("BackgroundSprite");
             if (background == null)
                 return;
@@ -95,6 +92,14 @@ namespace Flirper
             if (UIView.GetAView ().FindUIComponent ("FlirperAttribution") == null) {
                 flirperAttribution = UIView.GetAView ().AddUIComponent (typeof(UILabel)) as UILabel;
                 flirperAttribution.name = "FlirperAttribution";
+
+                flirperAttribution.eventClick += (UIComponent component, UIMouseEventParameter eventParam) => {
+                    UILabel label = ((UILabel)component);
+                    if(label.text != "Loading"){
+                        label.text = "Loading";
+                        FlirperBootstrap.flirpIt();
+                    }
+                };
             } else {
                 flirperAttribution = UIView.GetAView ().FindUIComponent ("FlirperAttribution") as UILabel;
             }
