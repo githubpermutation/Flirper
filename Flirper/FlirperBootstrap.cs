@@ -136,8 +136,8 @@ namespace Flirper
             };
         }
 
-        static void changeLabel (String msg) {
-
+        static void changeLabel (String msg) 
+        {
             String text = "";
             if(msg != null) {
                 text = msg;
@@ -182,7 +182,6 @@ namespace Flirper
 
         static void assignBGsprite (UITextureSprite bgsprite, Texture2D bg)
         {
-
             //reset to allow multiple flirps without stretching
             bgsprite.width = UIView.GetAView ().GetScreenResolution ().x;
             bgsprite.height = UIView.GetAView ().GetScreenResolution ().y;
