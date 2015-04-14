@@ -18,6 +18,8 @@ namespace Flirper
             if (bgsprite == null)
                 return;
 
+            initLabel (); 
+
             ImageListEntry entry = ImageList.getRandomEntry ();
             if (entry == null) {
                 DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, "Flirper: could not get an image entry. Check format of FlirperImageList.txt");
@@ -46,7 +48,7 @@ namespace Flirper
                     bg.LoadImage (imgdata);
                     
                     assignImageData (bgsprite, bg);
-                    createLabel (entry);
+                    changeLabel (entry);
                 }
             };
         }
@@ -67,7 +69,7 @@ namespace Flirper
                 savegameimage = Blur.FastBlur (savegameimage, 2, 2);
                 assignImageData (bgsprite, savegameimage);
 
-                createLabel (new ImageListEntry ("", title, "", extraInfo));
+                changeLabel (new ImageListEntry ("", title, "", extraInfo));
             } else if (entry.isHTTP) {
                 Request imgget = new Request ("get", entry.uri);
                 imgget.AddHeader ("Accept-Language", "en");
@@ -81,28 +83,22 @@ namespace Flirper
                 bg.LoadImage (imgdata);
 
                 assignImageData (bgsprite, bg);
-                createLabel(entry);
+                changeLabel(entry);
             }
         }
 
-        static void createLabel (ImageListEntry entry)
+        static void initLabel ()
         {
-            UILabel flirperAttribution;
-
             if (UIView.GetAView ().FindUIComponent ("FlirperAttribution") == null) {
-                flirperAttribution = UIView.GetAView ().AddUIComponent (typeof(UILabel)) as UILabel;
+                UILabel flirperAttribution = UIView.GetAView ().AddUIComponent (typeof(UILabel)) as UILabel;
                 flirperAttribution.name = "FlirperAttribution";
-
-                flirperAttribution.eventClick += (UIComponent component, UIMouseEventParameter eventParam) => {
-                    UILabel label = ((UILabel)component);
-                    if(label.text != "Loading"){
-                        label.text = "Loading";
-                        FlirperBootstrap.flirpIt();
-                    }
-                };
-            } else {
-                flirperAttribution = UIView.GetAView ().FindUIComponent ("FlirperAttribution") as UILabel;
+                flirperAttribution.eventClick += loadNextFlirp;
             }
+        }
+
+        static void changeLabel (ImageListEntry entry)
+        {
+            UILabel flirperAttribution = UIView.GetAView ().FindUIComponent ("FlirperAttribution") as UILabel;
 
             flirperAttribution.textAlignment = UIHorizontalAlignment.Right;
             flirperAttribution.textScale = 2f;
@@ -128,6 +124,15 @@ namespace Flirper
 
             flirperAttribution.relativePosition = new Vector3 (UIView.GetAView().GetScreenResolution().x - flirperAttribution.width, 0);
             flirperAttribution.relativePosition += new Vector3 (-10, 10);
+        }
+
+        static void loadNextFlirp (UIComponent component, UIMouseEventParameter eventParam)
+        {
+            UILabel label = ((UILabel)component);
+            if(label.text != "Loading"){
+                label.text = "Loading";
+                FlirperBootstrap.flirpIt();
+            }
         }
 
         static void assignImageData (UITextureSprite bgsprite, Texture2D bg)
