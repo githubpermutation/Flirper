@@ -100,7 +100,8 @@ namespace Flirper
             }
 
             flirperAttribution.textAlignment = UIHorizontalAlignment.Right;
-            flirperAttribution.textScale = 1.5f;
+            flirperAttribution.textScale = 2f;
+            flirperAttribution.textScaleMode = UITextScaleMode.ScreenResolution;
 
             flirperAttribution.text = "";
 
@@ -120,8 +121,7 @@ namespace Flirper
             flirperAttribution.outlineSize = 1;
             flirperAttribution.useOutline = true;
 
-            flirperAttribution.pivot = UIPivotPoint.TopRight;
-            flirperAttribution.transformPosition = UIView.GetAView ().GetBounds ().max;
+            flirperAttribution.relativePosition = new Vector3 (UIView.GetAView().GetScreenResolution().x - flirperAttribution.width, 0);
             flirperAttribution.relativePosition += new Vector3 (-10, 10);
         }
 
