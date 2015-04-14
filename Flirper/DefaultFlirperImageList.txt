@@ -19,3 +19,10 @@ http://i.imgur.com/P6CMu1N.jpg;Small Town 2;Snakorn;redd.it/31nyup
 http://i.imgur.com/hB846Q5.jpg;Small Town 3;Snakorn;redd.it/31nyup
 http://i.imgur.com/Ahv4scy.jpg;Small Town 4;Snakorn;redd.it/31nyup
 http://i.imgur.com/QI0qxyb.jpg;Small Town 5;Snakorn;redd.it/31nyup
+http://i.imgur.com/oBihvV0.jpg;Small Gaps;Bonova;redd.it/2z78e7
+http://i.imgur.com/RxvSCFz.jpg;Midwesterner;TheBlakers;redd.it/31xk40
+http://i.imgur.com/EeklbxQ.jpg;Korenth Valley 1;OM3N1R;redd.it/2z390e
+http://i.imgur.com/BgsVZEI.jpg;Korenth Valley 2;OM3N1R;redd.it/2z390e
+http://i.imgur.com/z3xQGT9.jpg;The Town;wrogn;redd.it/30pthp
+http://i.imgur.com/dyavD1s.jpg;A Neighbourhood;wrogn;redd.it/30pthp
+http://i.imgur.com/nYeGAmr.jpg;Farms on the Outskirts;wrogn;redd.it/30pthp
