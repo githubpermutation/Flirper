@@ -7,7 +7,9 @@ namespace Flirper
     {
         public string Name {
             get {
-                FlirperBootstrap.flirpIt ();
+                if (!FlirperBootstrap.isBootstrapped)
+                    FlirperBootstrap.flirpIt ();
+
                 return "Flirper (beta)";
             }
         }

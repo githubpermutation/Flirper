@@ -11,6 +11,12 @@ namespace Flirper
     {
         private static readonly string ModTag = "[Flirper]";
 
+        public static bool isBootstrapped {
+            get {
+                return UIView.GetAView ().FindUIComponent ("FlirperAttribution") != null;
+            }
+        }
+
         public static void flirpIt ()
         {
             UIComponent background = UIView.GetAView ().FindUIComponent ("BackgroundSprite");
