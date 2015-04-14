@@ -26,16 +26,13 @@ namespace Flirper
 
         public bool isFile {
             get {
-                if (isHTTP || isLatestSaveGame) 
-                    return false;
-
-                return !System.IO.Directory.Exists(@uri) && System.IO.File.Exists(@uri);
+                return isLocal && !System.IO.Directory.Exists(@uri) && System.IO.File.Exists(@uri);
             }
         }
 
         public bool isDirectory {
             get {
-                if (isHTTP || isLatestSaveGame || isFile) 
+                if (!isLocal || isFile) 
                     return false;
 
                 FileAttributes attr = System.IO.File.GetAttributes (@uri);
@@ -49,9 +46,15 @@ namespace Flirper
             }
         }
 
+        private bool isLocal {
+            get {
+                return !(isHTTP || isLatestSaveGame);
+            }
+        }
+
         public bool isValidPath {
             get {
-                if(isHTTP || isLatestSaveGame)
+                if(!isLocal)
                     return true;
 
                 try {
