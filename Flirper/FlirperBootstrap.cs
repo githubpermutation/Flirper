@@ -3,6 +3,7 @@ using ICities;
 using UnityEngine;
 using ColossalFramework.UI;
 using ColossalFramework.HTTP;
+using ColossalFramework;
 
 namespace Flirper
 {
@@ -26,53 +27,54 @@ namespace Flirper
 
             ImageListEntry entry = ImageList.getRandomEntry ();
             if (entry == null) {
-                DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, FlirperBootstrap.ModTag+" could not get an image entry. Check format of FlirperImageList.txt");
+                DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, FlirperBootstrap.ModTag + " could not get an image entry. Check format of FlirperImageList.txt");
                 error = "Could not load a valid entry\n";
                 error += "Click to try again";
             }
 
-            if(error != "") {
-                changeLabel(error);
+            if (error != "") {
+                changeLabel (error);
                 return;
             }
 
             try {
                 changeBackgroundImage (bgsprite, entry);
             } catch (Exception ex) {
-                DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, FlirperBootstrap.ModTag+" " + ex.ToString ());
-                error = "Error loading "+entry.uri+"\n";
+                DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, FlirperBootstrap.ModTag + " " + ex.ToString ());
+                error = "Error loading " + entry.uri + "\n";
                 error += "Click to try again";
             }
 
-            if(error != "") {
-                changeLabel(error);
+            if (error != "") {
+                changeLabel (error);
                 return;
             }
         }
 
-        static Action<Request> httpCallback (UITextureSprite bgsprite, ImageListEntry entry)
+        static void initLabel ()
         {
-            return delegate (Request req) {
-                if (req.isDone) {
-                    if (req.exception != null) {
-                        throw req.exception;
-                    }
-                    if (req.response == null || req.response.status != 200) {
-                        throw new Exception ("error while fetching " + entry.uri);
-                    }
-
-                    Texture2D bg = new Texture2D (1, 1);
-                    byte[] imgdata = req.response.bytes;
-                    bg.LoadImage (imgdata);
-
-                    if (bg.width < 10 || bg.height < 10) {
-                        throw new Exception ("image looks wrong " + entry.uri);
-                    }
-
-                    assignImageData (bgsprite, bg);
-                    changeLabel (entry);
-                }
-            };
+            if (UIView.GetAView ().FindUIComponent ("FlirperAttribution") == null) {
+                UILabel flirperAttribution = UIView.GetAView ().AddUIComponent (typeof(UILabel)) as UILabel;
+                flirperAttribution.name = "FlirperAttribution";
+                flirperAttribution.eventClick += loadNextFlirp;
+                
+                flirperAttribution.textAlignment = UIHorizontalAlignment.Right;
+                flirperAttribution.textScale = 2f;
+                flirperAttribution.textScaleMode = UITextScaleMode.ScreenResolution;
+                
+                flirperAttribution.outlineColor = new Color32 (0, 0, 0, 200);
+                flirperAttribution.outlineSize = 1;
+                flirperAttribution.useOutline = true;
+            }
+        }
+        
+        static void loadNextFlirp (UIComponent component, UIMouseEventParameter eventParam)
+        {
+            UILabel label = ((UILabel)component);
+            if (label.text != "Loading") {
+                label.text = "Loading";
+                FlirperBootstrap.flirpIt ();
+            }
         }
 
         static void changeBackgroundImage (UITextureSprite bgsprite, ImageListEntry entry)
@@ -108,26 +110,34 @@ namespace Flirper
                 changeLabel(entry);
             }
         }
-
-        static void initLabel ()
+        
+        static Action<Request> httpCallback (UITextureSprite bgsprite, ImageListEntry entry)
         {
-            if (UIView.GetAView ().FindUIComponent ("FlirperAttribution") == null) {
-                UILabel flirperAttribution = UIView.GetAView ().AddUIComponent (typeof(UILabel)) as UILabel;
-                flirperAttribution.name = "FlirperAttribution";
-                flirperAttribution.eventClick += loadNextFlirp;
-
-                flirperAttribution.textAlignment = UIHorizontalAlignment.Right;
-                flirperAttribution.textScale = 2f;
-                flirperAttribution.textScaleMode = UITextScaleMode.ScreenResolution;
-
-                flirperAttribution.outlineColor = new Color32 (0, 0, 0, 200);
-                flirperAttribution.outlineSize = 1;
-                flirperAttribution.useOutline = true;
-            }
+            return delegate (Request req) {
+                if (req.isDone) {
+                    if (req.exception != null) {
+                        throw req.exception;
+                    }
+                    if (req.response == null || req.response.status != 200) {
+                        throw new Exception ("error while fetching " + entry.uri);
+                    }
+                    
+                    Texture2D bg = new Texture2D (1, 1);
+                    byte[] imgdata = req.response.bytes;
+                    bg.LoadImage (imgdata);
+                    
+                    if (bg.width < 10 || bg.height < 10) {
+                        throw new Exception ("image looks wrong " + entry.uri);
+                    }
+                    
+                    assignImageData (bgsprite, bg);
+                    changeLabel (entry);
+                }
+            };
         }
 
-        static void changeLabel (String msg) {
-
+        static void changeLabel (String msg) 
+        {
             String text = "";
             if(msg != null) {
                 text = msg;
@@ -166,16 +176,11 @@ namespace Flirper
             changeLabel(text);
         }
 
-        static void loadNextFlirp (UIComponent component, UIMouseEventParameter eventParam)
-        {
-            UILabel label = ((UILabel)component);
-            if(label.text != "Loading"){
-                changeLabel("Loading");
-                FlirperBootstrap.flirpIt();
-            }
+        static void assignImageData (UITextureSprite bgsprite, Texture2D bg) {
+            fadeAssign(bgsprite, bg);
         }
 
-        static void assignImageData (UITextureSprite bgsprite, Texture2D bg)
+        static void assignBGsprite (UITextureSprite bgsprite, Texture2D bg)
         {
             //reset to allow multiple flirps without stretching
             bgsprite.width = UIView.GetAView ().GetScreenResolution ().x;
@@ -195,6 +200,33 @@ namespace Flirper
 
             bgsprite.texture = bg;
             bgsprite.absolutePosition = new Vector3 (0, 0);
+        }
+
+        static void fadeAssign (UITextureSprite bgsprite, Texture2D bg)
+        {
+            UITextureSprite cc;
+            cc = UIView.GetAView ().FindUIComponent ("BackgroundHider") as UITextureSprite;
+            if (cc == null) {
+                cc = UIView.GetAView ().AddUIComponent (typeof(UITextureSprite)) as UITextureSprite;
+                cc.name = "BackgroundHider";
+            }
+            cc.zOrder = 1;
+            cc.FitTo (cc.parent);
+            cc.relativePosition = new Vector3 (0, 0);            
+            cc.texture = Texture2D.whiteTexture;
+
+            cc.color = new Color32(0,0,0,0);
+
+            ValueAnimator.Animate("HideAnimation",delegate(float val) {
+                cc.color = new Color32(cc.color.r,cc.color.g,cc.color.b,(byte)val);
+            }, new AnimatedFloat(0f,255f,1f,EasingType.CubicEaseIn), delegate() {
+
+                assignBGsprite(bgsprite,bg);
+
+                ValueAnimator.Animate("HideAnimation2",delegate(float val) {
+                    cc.color = new Color32(cc.color.r,cc.color.g,cc.color.b,(byte)val);
+                }, new AnimatedFloat(255f,0f,1f,EasingType.CubicEaseOut));
+            });            
         }
     }
  }
