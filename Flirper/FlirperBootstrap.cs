@@ -72,7 +72,7 @@ namespace Flirper
         {
             UILabel label = ((UILabel)component);
             if (label.text != "Loading") {
-                label.text = "Loading";
+                changeLabel("Loading");
                 FlirperBootstrap.flirpIt ();
             }
         }
@@ -179,6 +179,33 @@ namespace Flirper
         static void assignImageData (UITextureSprite bgsprite, Texture2D bg) {
             fadeAssign(bgsprite, bg);
         }
+        
+        static void fadeAssign (UITextureSprite bgsprite, Texture2D bg)
+        {
+            UITextureSprite cc;
+            cc = UIView.GetAView ().FindUIComponent ("BackgroundHider") as UITextureSprite;
+            if (cc == null) {
+                cc = UIView.GetAView ().AddUIComponent (typeof(UITextureSprite)) as UITextureSprite;
+                cc.name = "BackgroundHider";
+            }
+            cc.zOrder = 1;
+            cc.FitTo (cc.parent);
+            cc.relativePosition = new Vector3 (0, 0);            
+            cc.texture = Texture2D.whiteTexture;
+            
+            cc.color = new Color32(0,0,0,0);
+            
+            ValueAnimator.Animate("HideAnimation",delegate(float val) {
+                cc.color = new Color32(cc.color.r,cc.color.g,cc.color.b,(byte)val);
+            }, new AnimatedFloat(0f,255f,1f,EasingType.CubicEaseIn), delegate() {
+                
+                assignBGsprite(bgsprite,bg);
+                
+                ValueAnimator.Animate("HideAnimation2",delegate(float val) {
+                    cc.color = new Color32(cc.color.r,cc.color.g,cc.color.b,(byte)val);
+                }, new AnimatedFloat(255f,0f,1f,EasingType.CubicEaseOut));
+            });            
+        }
 
         static void assignBGsprite (UITextureSprite bgsprite, Texture2D bg)
         {
@@ -200,33 +227,6 @@ namespace Flirper
 
             bgsprite.texture = bg;
             bgsprite.absolutePosition = new Vector3 (0, 0);
-        }
-
-        static void fadeAssign (UITextureSprite bgsprite, Texture2D bg)
-        {
-            UITextureSprite cc;
-            cc = UIView.GetAView ().FindUIComponent ("BackgroundHider") as UITextureSprite;
-            if (cc == null) {
-                cc = UIView.GetAView ().AddUIComponent (typeof(UITextureSprite)) as UITextureSprite;
-                cc.name = "BackgroundHider";
-            }
-            cc.zOrder = 1;
-            cc.FitTo (cc.parent);
-            cc.relativePosition = new Vector3 (0, 0);            
-            cc.texture = Texture2D.whiteTexture;
-
-            cc.color = new Color32(0,0,0,0);
-
-            ValueAnimator.Animate("HideAnimation",delegate(float val) {
-                cc.color = new Color32(cc.color.r,cc.color.g,cc.color.b,(byte)val);
-            }, new AnimatedFloat(0f,255f,1f,EasingType.CubicEaseIn), delegate() {
-
-                assignBGsprite(bgsprite,bg);
-
-                ValueAnimator.Animate("HideAnimation2",delegate(float val) {
-                    cc.color = new Color32(cc.color.r,cc.color.g,cc.color.b,(byte)val);
-                }, new AnimatedFloat(255f,0f,1f,EasingType.CubicEaseOut));
-            });            
         }
     }
  }
