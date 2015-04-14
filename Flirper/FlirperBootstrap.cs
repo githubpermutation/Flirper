@@ -182,27 +182,28 @@ namespace Flirper
         
         static void fadeAssign (UITextureSprite bgsprite, Texture2D bg)
         {
-            UITextureSprite cc;
-            cc = UIView.GetAView ().FindUIComponent ("BackgroundHider") as UITextureSprite;
-            if (cc == null) {
-                cc = UIView.GetAView ().AddUIComponent (typeof(UITextureSprite)) as UITextureSprite;
-                cc.name = "BackgroundHider";
+            UITextureSprite bgHider;
+            bgHider = UIView.GetAView ().FindUIComponent ("BackgroundHider") as UITextureSprite;
+            if (bgHider == null) {
+                bgHider = UIView.GetAView ().AddUIComponent (typeof(UITextureSprite)) as UITextureSprite;
+                bgHider.name = "BackgroundHider";
             }
-            cc.zOrder = 1;
-            cc.FitTo (cc.parent);
-            cc.relativePosition = new Vector3 (0, 0);            
-            cc.texture = Texture2D.whiteTexture;
+
+            bgHider.zOrder = 1;
+            bgHider.FitTo (bgHider.parent);
+            bgHider.relativePosition = new Vector3 (0, 0);            
+            bgHider.texture = Texture2D.whiteTexture;
             
-            cc.color = new Color32(0,0,0,0);
+            bgHider.color = new Color32(0,0,0,0);
             
-            ValueAnimator.Animate("HideAnimation",delegate(float val) {
-                cc.color = new Color32(cc.color.r,cc.color.g,cc.color.b,(byte)val);
+            ValueAnimator.Animate("HideAnimation", delegate(float val) {
+                bgHider.color = new Color32(bgHider.color.r,bgHider.color.g,bgHider.color.b,(byte)val);
             }, new AnimatedFloat(0f,255f,1f,EasingType.CubicEaseIn), delegate() {
                 
                 assignBGsprite(bgsprite,bg);
                 
-                ValueAnimator.Animate("HideAnimation2",delegate(float val) {
-                    cc.color = new Color32(cc.color.r,cc.color.g,cc.color.b,(byte)val);
+                ValueAnimator.Animate("HideAnimation2", delegate(float val) {
+                    bgHider.color = new Color32(bgHider.color.r,bgHider.color.g,bgHider.color.b,(byte)val);
                 }, new AnimatedFloat(255f,0f,1f,EasingType.CubicEaseOut));
             });            
         }
