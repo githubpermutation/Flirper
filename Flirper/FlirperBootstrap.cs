@@ -162,6 +162,7 @@ namespace Flirper
                 changeLabel("");
                 return;
             }
+
             if (!String.IsNullOrEmpty (entry.title)) {
                 text += entry.title;
             }

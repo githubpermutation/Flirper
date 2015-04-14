@@ -21,33 +21,18 @@ namespace Flirper
             if (!System.IO.File.Exists (pathToImageList)) {
                 createDefaultImageList ();
             }
+
             List<ImageListEntry> entries = new List<ImageListEntry> ();
             string[] fileEntries = System.IO.File.ReadAllLines (pathToImageList);
 
             foreach (string entry in fileEntries) {
                 ImageListEntry imagelistentry = parse (entry);
-
-                if (imagelistentry == null || !imagelistentry.isValidPath)
-                    continue;
-
-                if (imagelistentry.isDirectory) {
-                    entries.AddRange (getDirectoryEntries (imagelistentry.uri));
-                } else { 
-                    if(imagelistentry.isFile) {
-                        String title = Path.GetFileNameWithoutExtension (@imagelistentry.uri);
-                        imagelistentry = new ImageListEntry (imagelistentry.uri, title, imagelistentry.author, imagelistentry.extraInfo);
-                    }
-                    entries.Add (imagelistentry);
-                }
+                addEntryToList (imagelistentry, entries);
             }
 
-            if (entries.Count == 0)
-                return null;
-
-            Random random = new Random ();
-            return entries [random.Next (entries.Count)];
+            return selectFrom (entries);
         }
-
+        
         static void createDefaultImageList ()
         {
             String path = Path.Combine (DataLocation.localApplicationData, "ModConfig");
@@ -63,7 +48,7 @@ namespace Flirper
                 }
             }
         }
-
+        
         private static ImageListEntry parse (string entry)
         {
             string[] items = entry.Split (';');
@@ -71,17 +56,17 @@ namespace Flirper
                 return null;
             }
             string uri = items [0];
-
+            
             string title = "";
             if (items.Length > 1) {
                 title = items [1];
             }
-
+            
             string author = "";
             if (items.Length > 2) {
                 author = items [2];
             }
-
+            
             string extraInfo = "";
             if (items.Length > 3) {
                 extraInfo = items [3];
@@ -90,6 +75,22 @@ namespace Flirper
             return new ImageListEntry (uri, title, author, extraInfo);
         }
 
+        static void addEntryToList (ImageListEntry imagelistentry, List<ImageListEntry> entries)
+        {
+            if (imagelistentry == null || !imagelistentry.isValidPath)
+                return;
+            
+            if (imagelistentry.isDirectory) {
+                entries.AddRange (getDirectoryEntries (imagelistentry.uri));
+            } else {
+                if (imagelistentry.isFile) {
+                    String title = Path.GetFileNameWithoutExtension (imagelistentry.uri);
+                    imagelistentry = new ImageListEntry (imagelistentry.uri, title, imagelistentry.author, imagelistentry.extraInfo);
+                }
+                entries.Add (imagelistentry);
+            }
+        }
+        
         private static List<ImageListEntry> getDirectoryEntries (string directoryPath)
         {
             List<ImageListEntry> list = new List<ImageListEntry> ();
@@ -108,6 +109,15 @@ namespace Flirper
                 }
             }
             return list;
+        }
+        
+        static ImageListEntry selectFrom (List<ImageListEntry> entries)
+        {
+            if (entries.Count == 0)
+                return null;
+
+            Random random = new Random ();
+            return entries [random.Next (entries.Count)];
         }
     }
 }
