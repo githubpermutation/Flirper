@@ -37,11 +37,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="FlirperLoader.cs" />
     <Compile Include="ImageListEntry.cs" />
     <Compile Include="Blur.cs" />
     <Compile Include="ImageList.cs" />
     <Compile Include="FlirperBootstrap.cs" />
+    <Compile Include="FlirperMod.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

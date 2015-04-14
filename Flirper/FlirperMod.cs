@@ -3,7 +3,7 @@ using ICities;
 
 namespace Flirper
 {
-    public class FlirperLoader : IUserMod
+    public class FlirperMod : IUserMod
     {
         public string Name {
             get {
