@@ -12,7 +12,12 @@ namespace Flirper
 
         private static string pathToImageList {
             get {
-                return Path.Combine (Path.Combine (DataLocation.localApplicationData, "ModConfig"), filename);
+                return Path.Combine (pathToModConfig, filename);
+            }
+        }
+        private static string pathToModConfig {
+            get {
+                return Path.Combine (DataLocation.localApplicationData, "ModConfig");
             }
         }
 
@@ -53,9 +58,8 @@ namespace Flirper
         static bool createDefaultImageList ()
         {
             try {
-                String path = Path.Combine (DataLocation.localApplicationData, "ModConfig");
-                if (!Directory.Exists (path))
-                    Directory.CreateDirectory (path);
+                if (!Directory.Exists (pathToModConfig))
+                    Directory.CreateDirectory (pathToModConfig);
                 
                 using (System.IO.Stream inputStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Flirper.DefaultFlirperImageList.txt")) {
                     using (System.IO.FileStream outputStream = new System.IO.FileStream(pathToImageList, System.IO.FileMode.Create)) {
