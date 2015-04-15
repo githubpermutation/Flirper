@@ -42,7 +42,7 @@ namespace Flirper
 
         public bool isLatestSaveGame {
             get {
-                return this.uri.ToLower ().StartsWith ("savegame");
+                return this.uri.ToLower ().StartsWith ("latestsavegame");
             }
         }
 

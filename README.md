@@ -37,7 +37,7 @@ http://i.imgur.com/H2mby53.jpg;Cats on stairs;13ucci;http://redd.it/2ytelo/
 ##Special sources
 You can add the line
 ```
-SAVEGAME
+LATESTSAVEGAME
 ```
 to the FlirperImageList.txt, just like any other source. If the mod chooses this line, it will get your latest savegame and display its preview screenshot. Due to technical limitations (low resolution), this image is blurred, so it might not look great everywhere.
 
