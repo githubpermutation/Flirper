@@ -20,6 +20,17 @@ namespace Flirper
         {
             if (!System.IO.File.Exists (pathToImageList)) {
                 createDefaultImageList ();
+            } else {
+                bool similar = sameAsDefault (pathToImageList);
+                if(similar) {
+                    try {
+                        deleteUserList(pathToImageList);
+                        createDefaultImageList ();
+                    } catch (Exception ex) {
+                        ex.ToString();
+                        return null;
+                    }
+                }
             }
 
             List<ImageListEntry> entries = new List<ImageListEntry> ();
@@ -47,6 +58,53 @@ namespace Flirper
                     outputStream.Close ();
                 }
             }
+        }
+                
+        static bool sameAsDefault (String pathToUserFile)
+        {
+            Stream defaultListStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("Flirper.DefaultFlirperImageList.txt");
+            FileStream userListStream = new FileStream (pathToUserFile, FileMode.Open);
+            
+            long defaultListLength = defaultListStream.Length;
+            long userListLength = userListStream.Length;
+            
+            if (userListLength > defaultListLength) {
+                defaultListStream.Close ();
+                userListStream.Close ();
+                return false;
+            }
+            
+            userListStream.Close ();
+            
+            byte[] defaultListBytes = new byte[userListLength];
+            defaultListStream.Read (defaultListBytes, 0, defaultListBytes.Length);
+            
+            byte[] userListBytes = File.ReadAllBytes (pathToUserFile);
+            
+            defaultListStream.Close ();
+            
+            bool similar = ByteArraysEqual (userListBytes, defaultListBytes);
+            return similar;
+        }
+        
+        private static bool ByteArraysEqual (byte[] b1, byte[] b2)
+        {
+            if (b1 == b2)
+                return true;
+            if (b1 == null || b2 == null)
+                return false;
+            if (b1.Length != b2.Length)
+                return false;
+            for (int i=0; i < b1.Length; i++) {
+                if (b1 [i] != b2 [i])
+                    return false;
+            }
+            return true;
+        }
+        
+        static void deleteUserList (string pathToImageList)
+        {
+            File.Delete(pathToImageList);
         }
         
         private static ImageListEntry parse (string entry)
