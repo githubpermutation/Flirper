@@ -71,7 +71,7 @@ namespace Flirper
                 }
                 return true;
             } catch (Exception ex) {
-                ex.ToString();
+                ex.ToString ();
                 return false;
             }
         }
@@ -79,28 +79,19 @@ namespace Flirper
         static bool imageListUnchangedFromDefault (String pathToUserFile)
         {
             Stream defaultListStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("Flirper.DefaultFlirperImageList.txt");
-            FileStream userListStream = new FileStream (pathToUserFile, FileMode.Open);
-            
-            long defaultListLength = defaultListStream.Length;
-            long userListLength = userListStream.Length;
-            
-            if (userListLength > defaultListLength) {
+
+            byte[] userListBytes = File.ReadAllBytes (pathToUserFile);
+            byte[] defaultListBytes = new byte[userListBytes.Length];
+
+            if (userListBytes.Length >= defaultListStream.Length) {
                 defaultListStream.Close ();
-                userListStream.Close ();
                 return false;
             }
-            
-            userListStream.Close ();
-            
-            byte[] defaultListBytes = new byte[userListLength];
+
             defaultListStream.Read (defaultListBytes, 0, defaultListBytes.Length);
-            
-            byte[] userListBytes = File.ReadAllBytes (pathToUserFile);
-            
             defaultListStream.Close ();
-            
-            bool similar = ByteArraysEqual (userListBytes, defaultListBytes);
-            return similar;
+
+            return ByteArraysEqual (userListBytes, defaultListBytes);
         }
         
         private static bool ByteArraysEqual (byte[] b1, byte[] b2)
