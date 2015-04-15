@@ -18,20 +18,8 @@ namespace Flirper
 
         public static ImageListEntry getRandomEntry ()
         {
-            if (!System.IO.File.Exists (pathToImageList)) {
-                createDefaultImageList ();
-            } else {
-                bool similar = sameAsDefault (pathToImageList);
-                if(similar) {
-                    try {
-                        deleteUserList(pathToImageList);
-                        createDefaultImageList ();
-                    } catch (Exception ex) {
-                        ex.ToString();
-                        return null;
-                    }
-                }
-            }
+            if (!handleImageListCreation ())
+                return null;
 
             List<ImageListEntry> entries = new List<ImageListEntry> ();
             string[] fileEntries = System.IO.File.ReadAllLines (pathToImageList);
@@ -42,6 +30,23 @@ namespace Flirper
             }
 
             return selectFrom (entries);
+        }
+
+        static bool handleImageListCreation ()
+        {
+            if (!System.IO.File.Exists (pathToImageList)) {
+                createDefaultImageList ();
+                return true;
+            }
+            try {
+                if (imageListUnchangedFromDefault (pathToImageList)) {
+                    deleteFile (pathToImageList);
+                    createDefaultImageList ();
+                    return true;
+                }
+            } catch (Exception ex) {
+                ex.ToString ();
+            }
         }
         
         static void createDefaultImageList ()
@@ -60,7 +65,7 @@ namespace Flirper
             }
         }
                 
-        static bool sameAsDefault (String pathToUserFile)
+        static bool imageListUnchangedFromDefault (String pathToUserFile)
         {
             Stream defaultListStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("Flirper.DefaultFlirperImageList.txt");
             FileStream userListStream = new FileStream (pathToUserFile, FileMode.Open);
@@ -102,9 +107,9 @@ namespace Flirper
             return true;
         }
         
-        static void deleteUserList (string pathToImageList)
+        static void deleteFile (string pathToImageList)
         {
-            File.Delete(pathToImageList);
+            File.Delete (pathToImageList);
         }
         
         private static ImageListEntry parse (string entry)
