@@ -12,15 +12,19 @@ namespace Flirper
 
         private static string pathToImageList {
             get {
-                return Path.Combine (Path.Combine (DataLocation.localApplicationData, "ModConfig"), filename);
+                return Path.Combine (pathToModConfig, filename);
+            }
+        }
+        private static string pathToModConfig {
+            get {
+                return Path.Combine (DataLocation.localApplicationData, "ModConfig");
             }
         }
 
         public static ImageListEntry getRandomEntry ()
         {
-            if (!System.IO.File.Exists (pathToImageList)) {
-                createDefaultImageList ();
-            }
+            if (!handleImageListCreation ())
+                return null;
 
             List<ImageListEntry> entries = new List<ImageListEntry> ();
             string[] fileEntries = System.IO.File.ReadAllLines (pathToImageList);
@@ -32,21 +36,82 @@ namespace Flirper
 
             return selectFrom (entries);
         }
-        
-        static void createDefaultImageList ()
+
+        static bool handleImageListCreation ()
         {
-            String path = Path.Combine (DataLocation.localApplicationData, "ModConfig");
-            if (!Directory.Exists (path))
-                Directory.CreateDirectory (path);
-            
-            using (System.IO.Stream inputStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Flirper.DefaultFlirperImageList.txt")) {
-                using (System.IO.FileStream outputStream = new System.IO.FileStream(pathToImageList, System.IO.FileMode.Create)) {
-                    for (int i = 0; i < inputStream.Length; i++) {
-                        outputStream.WriteByte ((byte)inputStream.ReadByte ());
-                    }
-                    outputStream.Close ();
-                }
+            if (!System.IO.File.Exists (pathToImageList)) {
+                return createDefaultImageList ();
             }
+
+            try {
+                if (imageListUnchangedFromDefault (pathToImageList)) {
+                    deleteFile (pathToImageList);
+                    return createDefaultImageList ();
+                }
+                return true;
+            } catch (Exception ex) {
+                ex.ToString ();
+                return false;
+            }
+        }
+        
+        static bool createDefaultImageList ()
+        {
+            try {
+                if (!Directory.Exists (pathToModConfig))
+                    Directory.CreateDirectory (pathToModConfig);
+                
+                using (System.IO.Stream inputStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Flirper.DefaultFlirperImageList.txt")) {
+                    using (System.IO.FileStream outputStream = new System.IO.FileStream(pathToImageList, System.IO.FileMode.Create)) {
+                        for (int i = 0; i < inputStream.Length; i++) {
+                            outputStream.WriteByte ((byte)inputStream.ReadByte ());
+                        }
+                        outputStream.Close ();
+                    }
+                }
+                return true;
+            } catch (Exception ex) {
+                ex.ToString ();
+                return false;
+            }
+        }
+                
+        static bool imageListUnchangedFromDefault (String pathToUserFile)
+        {
+            Stream defaultListStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("Flirper.DefaultFlirperImageList.txt");
+
+            byte[] userListBytes = File.ReadAllBytes (pathToUserFile);
+            byte[] defaultListBytes = new byte[userListBytes.Length];
+
+            if (userListBytes.Length >= defaultListStream.Length) {
+                defaultListStream.Close ();
+                return false;
+            }
+
+            defaultListStream.Read (defaultListBytes, 0, defaultListBytes.Length);
+            defaultListStream.Close ();
+
+            return ByteArraysEqual (userListBytes, defaultListBytes);
+        }
+        
+        private static bool ByteArraysEqual (byte[] b1, byte[] b2)
+        {
+            if (b1 == b2)
+                return true;
+            if (b1 == null || b2 == null)
+                return false;
+            if (b1.Length != b2.Length)
+                return false;
+            for (int i=0; i < b1.Length; i++) {
+                if (b1 [i] != b2 [i])
+                    return false;
+            }
+            return true;
+        }
+        
+        static void deleteFile (string pathToImageList)
+        {
+            File.Delete (pathToImageList);
         }
         
         private static ImageListEntry parse (string entry)
