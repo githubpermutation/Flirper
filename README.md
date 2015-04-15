@@ -23,7 +23,7 @@ C:\Users\MyUserName\Desktop\family\cat.jpg
 http://i.imgur.com/H2mby53.jpg
 ```
 
-Each line (except for directories) can have additional fields separated by a `;`. The fields are: 
+Each line (except for directories and special sources) can have additional fields separated by a `;`. The fields are: 
 * path
 * title
 * author
