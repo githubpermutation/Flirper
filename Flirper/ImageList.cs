@@ -35,33 +35,40 @@ namespace Flirper
         static bool handleImageListCreation ()
         {
             if (!System.IO.File.Exists (pathToImageList)) {
-                createDefaultImageList ();
-                return true;
+                return createDefaultImageList ();
             }
+
             try {
                 if (imageListUnchangedFromDefault (pathToImageList)) {
                     deleteFile (pathToImageList);
-                    createDefaultImageList ();
-                    return true;
+                    return createDefaultImageList ();
                 }
+                return true;
             } catch (Exception ex) {
                 ex.ToString ();
+                return false;
             }
         }
         
-        static void createDefaultImageList ()
+        static bool createDefaultImageList ()
         {
-            String path = Path.Combine (DataLocation.localApplicationData, "ModConfig");
-            if (!Directory.Exists (path))
-                Directory.CreateDirectory (path);
-            
-            using (System.IO.Stream inputStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Flirper.DefaultFlirperImageList.txt")) {
-                using (System.IO.FileStream outputStream = new System.IO.FileStream(pathToImageList, System.IO.FileMode.Create)) {
-                    for (int i = 0; i < inputStream.Length; i++) {
-                        outputStream.WriteByte ((byte)inputStream.ReadByte ());
+            try {
+                String path = Path.Combine (DataLocation.localApplicationData, "ModConfig");
+                if (!Directory.Exists (path))
+                    Directory.CreateDirectory (path);
+                
+                using (System.IO.Stream inputStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Flirper.DefaultFlirperImageList.txt")) {
+                    using (System.IO.FileStream outputStream = new System.IO.FileStream(pathToImageList, System.IO.FileMode.Create)) {
+                        for (int i = 0; i < inputStream.Length; i++) {
+                            outputStream.WriteByte ((byte)inputStream.ReadByte ());
+                        }
+                        outputStream.Close ();
                     }
-                    outputStream.Close ();
                 }
+                return true;
+            } catch (Exception ex) {
+                ex.ToString();
+                return false;
             }
         }
                 
