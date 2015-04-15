@@ -10,7 +10,7 @@ namespace Flirper
                 if (!FlirperBootstrap.isBootstrapped)
                     FlirperBootstrap.flirpIt ();
 
-                return "Flirper (beta)";
+                return "Flirper";
             }
         }
 
