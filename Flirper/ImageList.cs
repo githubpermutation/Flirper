@@ -37,7 +37,7 @@ namespace Flirper
             return selectFrom (entries);
         }
 
-        static bool handleImageListCreation ()
+        private static bool handleImageListCreation ()
         {
             if (!System.IO.File.Exists (pathToImageList)) {
                 return createDefaultImageList ();
@@ -55,12 +55,12 @@ namespace Flirper
             }
         }
         
-        static bool createDefaultImageList ()
+        private static bool createDefaultImageList ()
         {
             try {
                 if (!Directory.Exists (pathToModConfig))
                     Directory.CreateDirectory (pathToModConfig);
-                
+
                 using (System.IO.Stream inputStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Flirper.DefaultFlirperImageList.txt")) {
                     using (System.IO.FileStream outputStream = new System.IO.FileStream(pathToImageList, System.IO.FileMode.Create)) {
                         for (int i = 0; i < inputStream.Length; i++) {
@@ -76,7 +76,7 @@ namespace Flirper
             }
         }
                 
-        static bool imageListUnchangedFromDefault (String pathToUserFile)
+        private static bool imageListUnchangedFromDefault (String pathToUserFile)
         {
             Stream defaultListStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("Flirper.DefaultFlirperImageList.txt");
 
@@ -109,7 +109,7 @@ namespace Flirper
             return true;
         }
         
-        static void deleteFile (string pathToImageList)
+        private static void deleteFile (string pathToImageList)
         {
             File.Delete (pathToImageList);
         }
@@ -140,7 +140,7 @@ namespace Flirper
             return new ImageListEntry (uri, title, author, extraInfo);
         }
 
-        static void addEntryToList (ImageListEntry imagelistentry, List<ImageListEntry> entries)
+        private static void addEntryToList (ImageListEntry imagelistentry, List<ImageListEntry> entries)
         {
             if (imagelistentry == null || !imagelistentry.isValidPath)
                 return;
@@ -176,7 +176,7 @@ namespace Flirper
             return list;
         }
         
-        static ImageListEntry selectFrom (List<ImageListEntry> entries)
+        private static ImageListEntry selectFrom (List<ImageListEntry> entries)
         {
             if (entries.Count == 0)
                 return null;
