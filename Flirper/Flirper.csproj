@@ -61,7 +61,4 @@
       <HintPath>D:\SteamLibrary\SteamApps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DefaultFlirperImageList.txt" />
-  </ItemGroup>
 </Project>

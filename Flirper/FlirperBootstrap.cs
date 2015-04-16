@@ -57,7 +57,7 @@ namespace Flirper
             }
         }
 
-        static void initLabel ()
+        private static void initLabel ()
         {
             if (UIView.GetAView ().FindUIComponent ("FlirperAttribution") == null) {
                 UILabel flirperAttribution = UIView.GetAView ().AddUIComponent (typeof(UILabel)) as UILabel;
@@ -74,7 +74,7 @@ namespace Flirper
             }
         }
         
-        static void loadNextFlirp (UIComponent component, UIMouseEventParameter eventParam)
+        private static void loadNextFlirp (UIComponent component, UIMouseEventParameter eventParam)
         {
             UILabel label = ((UILabel)component);
             if (label.text != "Loading") {
@@ -83,7 +83,7 @@ namespace Flirper
             }
         }
 
-        static void changeBackgroundImage (UITextureSprite bgsprite, ImageListEntry entry)
+        private static void changeBackgroundImage (UITextureSprite bgsprite, ImageListEntry entry)
         {
             if (entry.isLatestSaveGame) {
                 SaveGameMetaData latestSaveGame = SaveHelper.GetLatestSaveGame ();
@@ -117,7 +117,7 @@ namespace Flirper
             }
         }
         
-        static Action<Request> httpCallback (UITextureSprite bgsprite, ImageListEntry entry)
+        private static Action<Request> httpCallback (UITextureSprite bgsprite, ImageListEntry entry)
         {
             return delegate (Request req) {
                 if (req.isDone) {
@@ -142,7 +142,7 @@ namespace Flirper
             };
         }
 
-        static void changeLabel (String msg) 
+        private static void changeLabel (String msg) 
         {
             String text = "";
             if(msg != null) {
@@ -160,7 +160,7 @@ namespace Flirper
             flirperAttribution.relativePosition += new Vector3 (-10, 10);
         }
 
-        static void changeLabel (ImageListEntry entry)
+        private static void changeLabel (ImageListEntry entry)
         {
             String text = "";
 
@@ -183,11 +183,11 @@ namespace Flirper
             changeLabel(text);
         }
 
-        static void assignImageData (UITextureSprite bgsprite, Texture2D bg) {
+        private static void assignImageData (UITextureSprite bgsprite, Texture2D bg) {
             fadeAssign(bgsprite, bg);
         }
         
-        static void fadeAssign (UITextureSprite bgsprite, Texture2D bg)
+        private static void fadeAssign (UITextureSprite bgsprite, Texture2D bg)
         {
             UITextureSprite bgHider;
             bgHider = UIView.GetAView ().FindUIComponent ("BackgroundHider") as UITextureSprite;
@@ -215,7 +215,7 @@ namespace Flirper
             });            
         }
 
-        static void assignBGsprite (UITextureSprite bgsprite, Texture2D bg)
+        private static void assignBGsprite (UITextureSprite bgsprite, Texture2D bg)
         {
             //reset to allow multiple flirps without stretching
             bgsprite.width = UIView.GetAView ().GetScreenResolution ().x;

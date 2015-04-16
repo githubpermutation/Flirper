@@ -26,27 +26,20 @@ namespace Flirper
             if (!handleImageListCreation ())
                 return null;
 
-            List<ImageListEntry> entries = new List<ImageListEntry> ();
-            string[] fileEntries = System.IO.File.ReadAllLines (pathToImageList);
-
-            foreach (string entry in fileEntries) {
-                ImageListEntry imagelistentry = parse (entry);
-                addEntryToList (imagelistentry, entries);
-            }
-
+            List<ImageListEntry> entries = imageListFromFile (pathToImageList);
             return selectFrom (entries);
         }
 
-        static bool handleImageListCreation ()
+        private static bool handleImageListCreation ()
         {
             if (!System.IO.File.Exists (pathToImageList)) {
-                return createDefaultImageList ();
+                return writeDefaultImageList ();
             }
 
             try {
-                if (imageListUnchangedFromDefault (pathToImageList)) {
+                if (userListIsDefault (pathToImageList)) {
                     deleteFile (pathToImageList);
-                    return createDefaultImageList ();
+                    return writeDefaultImageList ();
                 }
                 return true;
             } catch (Exception ex) {
@@ -55,68 +48,63 @@ namespace Flirper
             }
         }
         
-        static bool createDefaultImageList ()
+        private static bool writeDefaultImageList ()
         {
             try {
                 if (!Directory.Exists (pathToModConfig))
                     Directory.CreateDirectory (pathToModConfig);
-                
-                using (System.IO.Stream inputStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Flirper.DefaultFlirperImageList.txt")) {
-                    using (System.IO.FileStream outputStream = new System.IO.FileStream(pathToImageList, System.IO.FileMode.Create)) {
-                        for (int i = 0; i < inputStream.Length; i++) {
-                            outputStream.WriteByte ((byte)inputStream.ReadByte ());
-                        }
-                        outputStream.Close ();
-                    }
+
+                string toWrite = "";
+                foreach (ImageListEntry entry in defaultImageList) {
+                    toWrite += entry.asFileEntry;
                 }
+
+                File.AppendAllText (pathToImageList, toWrite);
+
                 return true;
             } catch (Exception ex) {
                 ex.ToString ();
                 return false;
             }
         }
-                
-        static bool imageListUnchangedFromDefault (String pathToUserFile)
+
+        private static List<ImageListEntry> imageListFromFile (string pathToUserFile)
         {
-            Stream defaultListStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("Flirper.DefaultFlirperImageList.txt");
-
-            byte[] userListBytes = File.ReadAllBytes (pathToUserFile);
-            byte[] defaultListBytes = new byte[userListBytes.Length];
-
-            if (userListBytes.Length >= defaultListStream.Length) {
-                defaultListStream.Close ();
-                return false;
+            List<ImageListEntry> list = new List<ImageListEntry> ();
+            string[] fileEntries = System.IO.File.ReadAllLines (pathToImageList);
+            
+            foreach (string entry in fileEntries) {
+                ImageListEntry imagelistentry = parse (entry);
+                addEntryToList (imagelistentry, list);
             }
 
-            defaultListStream.Read (defaultListBytes, 0, defaultListBytes.Length);
-            defaultListStream.Close ();
-
-            return ByteArraysEqual (userListBytes, defaultListBytes);
+            return list;
         }
-        
-        private static bool ByteArraysEqual (byte[] b1, byte[] b2)
+                
+        private static bool userListIsDefault (String pathToUserFile)
         {
-            if (b1 == b2)
-                return true;
-            if (b1 == null || b2 == null)
+            List<ImageListEntry> defaultList = defaultImageList;
+            List<ImageListEntry> userList = imageListFromFile (pathToUserFile);
+
+            if (userList.Count > defaultList.Count)
                 return false;
-            if (b1.Length != b2.Length)
-                return false;
-            for (int i=0; i < b1.Length; i++) {
-                if (b1 [i] != b2 [i])
+
+            foreach (ImageListEntry userEntry in userList) {
+                if (!defaultList.Contains (userEntry)) {
                     return false;
+                }
             }
             return true;
         }
         
-        static void deleteFile (string pathToImageList)
+        private static void deleteFile (string pathToImageList)
         {
             File.Delete (pathToImageList);
         }
         
         private static ImageListEntry parse (string entry)
         {
-            string[] items = entry.Split (';');
+            string[] items = entry.Split (ImageListEntry.fieldSeparator);
             if (items.Length == 0 || items [0] == null || String.IsNullOrEmpty (items [0])) {
                 return null;
             }
@@ -136,11 +124,11 @@ namespace Flirper
             if (items.Length > 3) {
                 extraInfo = items [3];
             }
-            
+
             return new ImageListEntry (uri, title, author, extraInfo);
         }
 
-        static void addEntryToList (ImageListEntry imagelistentry, List<ImageListEntry> entries)
+        private static void addEntryToList (ImageListEntry imagelistentry, List<ImageListEntry> entries)
         {
             if (imagelistentry == null || !imagelistentry.isValidPath)
                 return;
@@ -176,13 +164,53 @@ namespace Flirper
             return list;
         }
         
-        static ImageListEntry selectFrom (List<ImageListEntry> entries)
+        private static ImageListEntry selectFrom (List<ImageListEntry> entries)
         {
             if (entries.Count == 0)
                 return null;
 
             Random random = new Random ();
             return entries [random.Next (entries.Count)];
+        }
+        
+        private static List<ImageListEntry> defaultImageList {
+            get {
+                List<ImageListEntry> list = new List<ImageListEntry> ();
+            
+                list.Add (new ImageListEntry ("http://i.imgur.com/JbWQLJX.jpg", "Backyards", "nlight", "imgur.com/a/DRQTy"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/wSqsUeG.jpg", "Highrises", "nlight", "imgur.com/a/DRQTy"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/4jZvqLy.jpg", "100,000 strong today", "ossahib", "redd.it/2zcd5v"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/Z58lVbd.jpg", "Back Roads", "rik4000", "reddit.it/31xb4i"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/ger5HID.jpg", "Green Energy", "rik4000", "reddit.com/user/rik4000"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/CDYVa0G.jpg", "First Person", "raiderofawesome", "redd.it/2ypjuu"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/ZRYNL6M.jpg", "Urban T-Interchange", "laosimerah", "redd.it/2ytzo2"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/9PPtl5M.jpg", "200,000 and space for more", "laosimerah", "redd.it/2zegoe"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/TewWRrV.jpg", "Sunken Highways", "laosimerah", "redd.it/30oqmh"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/uYWjck2.jpg", "Highway Service Station", "IVIaarten", "redd.it/31kd5h"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/RbPjrLZ.jpg", "Low Field of View 1", "Simify", "redd.it/2zan7v"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/C1LAmJE.jpg", "Low Field of View 2", "Simify", "redd.it/2zan7v"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/KuHLYpC.jpg", "Welcome to Scotland", "Jonny1233", "redd.it/31bcqo"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/btkOJuj.jpg", "Main train line to the city", "Jonny1233", "redd.it/31bcqo"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/l005ZQa.jpg", "Anastilt", "Jonny1233", "redd.it/31bcqo"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/z3KELWU.png", "Little Ditches", "Simify", "redd.it/30z571"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/BQpbKP1.jpg", "Small Town 1", "Snakorn", "redd.it/31nyup"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/P6CMu1N.jpg", "Small Town 2", "Snakorn", "redd.it/31nyup"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/hB846Q5.jpg", "Small Town 3", "Snakorn", "redd.it/31nyup"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/Ahv4scy.jpg", "Small Town 4", "Snakorn", "redd.it/31nyup"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/QI0qxyb.jpg", "Small Town 5", "Snakorn", "redd.it/31nyup"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/oBihvV0.jpg", "Small Gaps", "Bonova", "redd.it/2z78e7"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/RxvSCFz.jpg", "Midwesterner", "TheBlakers", "redd.it/31xk40"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/EeklbxQ.jpg", "Korenth Valley 1", "OM3N1R", "redd.it/2z390e"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/BgsVZEI.jpg", "Korenth Valley 2", "OM3N1R", "redd.it/2z390e"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/z3xQGT9.jpg", "The Town", "wrogn", "redd.it/30pthp"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/dyavD1s.jpg", "A Neighbourhood", "wrogn", "redd.it/30pthp"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/nYeGAmr.jpg", "Farms on the Outskirts", "wrogn", "redd.it/30pthp"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/GYzN9fX.jpg", "Asteria capital", "Vicious713", "redd.it/32hpnf"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/ZIqLrJM.jpg", "Asteria harbor", "Vicious713", "redd.it/32hpnf"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/2QxzO98.jpg", "Overpass", "Vicious713", "redd.it/323fmx"));
+            
+                return list;
+            }
         }
     }
 }
