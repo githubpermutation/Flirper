@@ -10,6 +10,12 @@ namespace Flirper
         public string author;
         public string extraInfo;
 
+        public static string fieldSeparator {
+            get {
+                return ";";
+            }
+        }
+
         public ImageListEntry (string uri, string title, string author, string extraInfo)
         {
             this.uri = uri;
@@ -66,6 +72,20 @@ namespace Flirper
                 }
                 return true;
             }
+        }
+
+        public string asFileEntry {
+            get {
+                return string.Format ("{0}{1}{2}{1}{3}{1}{4}{1}{5}", uri, fieldSeparator, title, author, extraInfo, Environment.NewLine);
+            }
+        }
+
+        public override bool Equals (object other)
+        {
+            if(!(other is ImageListEntry))
+                return false;
+
+            return this.asFileEntry.Equals(((ImageListEntry)other).asFileEntry);
         }
     }
 }
