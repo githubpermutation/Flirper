@@ -208,6 +208,8 @@ namespace Flirper
                 list.Add (new ImageListEntry ("http://i.imgur.com/GYzN9fX.jpg", "Asteria capital", "Vicious713", "redd.it/32hpnf"));
                 list.Add (new ImageListEntry ("http://i.imgur.com/ZIqLrJM.jpg", "Asteria harbor", "Vicious713", "redd.it/32hpnf"));
                 list.Add (new ImageListEntry ("http://i.imgur.com/2QxzO98.jpg", "Overpass", "Vicious713", "redd.it/323fmx"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/3w9TSUh.jpg", "Mountaintop Cathedral", "maledin", "redd.it/30bbxf"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/khyuJxo.jpg", "Lorentum Airport", "maledin", "redd.it/30bbxf"));
             
                 return list;
             }
