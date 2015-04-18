@@ -78,7 +78,7 @@ namespace Flirper
         {
             UILabel label = ((UILabel)component);
             if (label.text != "Loading") {
-                changeLabel("Loading");
+                changeLabel ("Loading");
                 FlirperBootstrap.flirpIt ();
             }
         }
@@ -120,24 +120,31 @@ namespace Flirper
         private static Action<Request> httpCallback (UITextureSprite bgsprite, ImageListEntry entry)
         {
             return delegate (Request req) {
-                if (req.isDone) {
-                    if (req.exception != null) {
-                        throw req.exception;
+                try {
+                    if (req.isDone) {
+                        if (req.exception != null) {
+                            throw req.exception;
+                        }
+                        if (req.response == null || req.response.status != 200) {
+                            throw new Exception ("error while fetching " + entry.uri);
+                        }
+                        
+                        Texture2D bg = new Texture2D (1, 1);
+                        byte[] imgdata = req.response.bytes;
+                        bg.LoadImage (imgdata);
+                        
+                        if (bg.width < 10 || bg.height < 10) {
+                            throw new Exception ("image looks wrong " + entry.uri);
+                        }
+                        
+                        assignImageData (bgsprite, bg);
+                        changeLabel (entry);
                     }
-                    if (req.response == null || req.response.status != 200) {
-                        throw new Exception ("error while fetching " + entry.uri);
-                    }
-                    
-                    Texture2D bg = new Texture2D (1, 1);
-                    byte[] imgdata = req.response.bytes;
-                    bg.LoadImage (imgdata);
-                    
-                    if (bg.width < 10 || bg.height < 10) {
-                        throw new Exception ("image looks wrong " + entry.uri);
-                    }
-                    
-                    assignImageData (bgsprite, bg);
-                    changeLabel (entry);
+                } catch (Exception ex) {
+                    DebugOutputPanel.AddMessage (ColossalFramework.Plugins.PluginManager.MessageType.Error, FlirperBootstrap.ModTag + " " + ex.ToString ());
+                    String msg = "Error loading " + req.uri + "\n";
+                    msg += "Click to try again";
+                    changeLabel(msg);
                 }
             };
         }
