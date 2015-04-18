@@ -10,9 +10,9 @@ namespace Flirper
         public string author;
         public string extraInfo;
 
-        public static string fieldSeparator {
+        public static char fieldSeparator {
             get {
-                return ";";
+                return ';';
             }
         }
 
@@ -86,6 +86,11 @@ namespace Flirper
                 return false;
 
             return this.asFileEntry.Equals(((ImageListEntry)other).asFileEntry);
+        }
+
+        public override int GetHashCode ()
+        {
+            return asFileEntry.GetHashCode();
         }
     }
 }
