@@ -15,6 +15,7 @@ namespace Flirper
                 return Path.Combine (pathToModConfig, filename);
             }
         }
+
         private static string pathToModConfig {
             get {
                 return Path.Combine (DataLocation.localApplicationData, "ModConfig");
@@ -74,7 +75,7 @@ namespace Flirper
             string[] fileEntries = System.IO.File.ReadAllLines (pathToImageList);
             
             foreach (string entry in fileEntries) {
-                ImageListEntry imagelistentry = parse (entry);
+                ImageListEntry imagelistentry = ImageListEntry.parse (entry);
                 addEntryToList (imagelistentry, list);
             }
 
@@ -100,32 +101,6 @@ namespace Flirper
         private static void deleteFile (string pathToImageList)
         {
             File.Delete (pathToImageList);
-        }
-        
-        private static ImageListEntry parse (string entry)
-        {
-            string[] items = entry.Split (ImageListEntry.fieldSeparator);
-            if (items.Length == 0 || items [0] == null || String.IsNullOrEmpty (items [0])) {
-                return null;
-            }
-            string uri = items [0];
-            
-            string title = "";
-            if (items.Length > 1) {
-                title = items [1];
-            }
-            
-            string author = "";
-            if (items.Length > 2) {
-                author = items [2];
-            }
-            
-            string extraInfo = "";
-            if (items.Length > 3) {
-                extraInfo = items [3];
-            }
-
-            return new ImageListEntry (uri, title, author, extraInfo);
         }
 
         private static void addEntryToList (ImageListEntry imagelistentry, List<ImageListEntry> entries)

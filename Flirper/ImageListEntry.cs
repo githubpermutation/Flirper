@@ -92,5 +92,31 @@ namespace Flirper
         {
             return asFileEntry.GetHashCode();
         }
+
+        public static ImageListEntry parse (string entry)
+        {
+            string[] items = entry.Split (ImageListEntry.fieldSeparator);
+            if (items.Length == 0 || items [0] == null || String.IsNullOrEmpty (items [0])) {
+                return null;
+            }
+            string uri = items [0];
+            
+            string title = "";
+            if (items.Length > 1) {
+                title = items [1];
+            }
+            
+            string author = "";
+            if (items.Length > 2) {
+                author = items [2];
+            }
+            
+            string extraInfo = "";
+            if (items.Length > 3) {
+                extraInfo = items [3];
+            }
+            
+            return new ImageListEntry (uri, title, author, extraInfo);
+        }
     }
 }
