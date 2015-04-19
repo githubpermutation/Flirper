@@ -4,6 +4,7 @@ using UnityEngine;
 using ColossalFramework.UI;
 using ColossalFramework.HTTP;
 using ColossalFramework;
+using System.Collections.Generic;
 
 namespace Flirper
 {
@@ -14,6 +15,12 @@ namespace Flirper
         public static bool isBootstrapped {
             get {
                 return UIView.GetAView ().FindUIComponent ("FlirperAttribution") != null;
+            }
+        }
+
+        public static bool isSupported {
+            get {
+                return versionIsSupported ();
             }
         }
 
@@ -242,6 +249,18 @@ namespace Flirper
 
             bgsprite.texture = bg;
             bgsprite.absolutePosition = new Vector3 (0, 0);
+        }
+
+        private static bool versionIsSupported ()
+        {
+            UILabel version = UIView.GetAView ().FindUIComponent ("VersionNumber") as UILabel;
+            if (version == null || String.IsNullOrEmpty (version.text))
+                return false;
+            
+            List<string> supportedVersions = new List<string> ();
+            supportedVersions.Add ("1.0.7c");
+
+            return supportedVersions.Contains (version.text);
         }
     }
  }
