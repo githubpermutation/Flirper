@@ -189,6 +189,9 @@ namespace Flirper
                 list.Add (new ImageListEntry ("http://i.imgur.com/plprqgC.jpg", "Fischer Heights", "mab1981", "redd.it/330lkp"));
                 list.Add (new ImageListEntry ("http://i.imgur.com/puJUL4s.jpg", "With decorative trees", "JuicyJuice23", "redd.it/334ap8"));
                 list.Add (new ImageListEntry ("http://i.imgur.com/zP5nndL.jpg", "Downtown", "JuicyJuice23", "redd.it/334ap8"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/vWPw4aB.jpg", "Manhattan traffic", "zzjeffrey ", "redd.it/336uft"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/280KFEG.jpg", "A solar tomorrow", "zzjeffrey ", "redd.it/336uft"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/TwxmtYB.jpg", "Soccer", "zzjeffrey ", "redd.it/336uft"));
 
                 return list;
             }
