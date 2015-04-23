@@ -194,6 +194,11 @@ namespace Flirper
                 list.Add (new ImageListEntry ("http://i.imgur.com/TwxmtYB.jpg", "Soccer", "zzjeffrey", "redd.it/336uft"));
                 list.Add (new ImageListEntry ("http://i.imgur.com/HZ9ZUGF.jpg", "Cargo", "Novus_", "redd.it/3387bn"));
                 list.Add (new ImageListEntry ("http://i.imgur.com/a0TeAwC.jpg", "Exports", "Novus_", "redd.it/3387bn"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/7J8nNus.jpg", "Canalville", "Starkie", "redd.it/33cp51"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/q6zzMGP.jpg", "Mountaineering", "Tassietiger1", "redd.it/33hnrj"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/n90hE77.jpg", "Dosera river fork", "BirdsOfHell", "redd.it/33glm6"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/rHq5lVQ.jpg", "Dosera forestry", "BirdsOfHell", "redd.it/33glm6"));
+                list.Add (new ImageListEntry ("http://i.imgur.com/zoS4RBY.jpg", "Bird's-Eye View", "BirdsOfHell", "redd.it/33glm6"));
 
                 return list;
             }
