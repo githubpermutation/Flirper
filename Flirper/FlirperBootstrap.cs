@@ -253,14 +253,13 @@ namespace Flirper
 
         private static bool versionIsSupported ()
         {
-            UILabel version = UIView.GetAView ().FindUIComponent ("VersionNumber") as UILabel;
-            if (version == null || String.IsNullOrEmpty (version.text))
-                return false;
-            
+            string version;
+            version = BuildConfig.applicationVersion;
+
             List<string> supportedVersions = new List<string> ();
             supportedVersions.Add ("1.0.7c");
 
-            return supportedVersions.Contains (version.text);
+            return supportedVersions.Contains (version);
         }
     }
  }
