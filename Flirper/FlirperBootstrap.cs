@@ -258,6 +258,7 @@ namespace Flirper
 
             List<string> supportedVersions = new List<string> ();
             supportedVersions.Add ("1.0.7c");
+            supportedVersions.Add ("1.1.0b");
 
             return supportedVersions.Contains (version);
         }
